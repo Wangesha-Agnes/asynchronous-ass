@@ -21,7 +21,7 @@ async function getUserData(id) {
       }, 1000);
     });
   }
-  const userId = [11, 12, 13, 14, 15];
+  const userId = [1, 2, 3, 4, 5];
   async function fetchAndLogUserDataSequentially(userIds) {
     const results = await userIds.reduce(async (previousPromise, id) => {
     await previousPromise;
@@ -90,21 +90,28 @@ Scenario:
 // Logs whether the task succeeded or failed after all attempts.
 
 
-// Example function skeleton
 function unstableTask(taskName, failureProbability) {
     return new Promise((resolve, reject) => {
-        const randomValue = Math.random();
-        if (randomValue > failureProbability) {
-            resolve(`${taskName} succeeded`);
-        } else {
-            reject(`${taskName} failed`);
-        }
+    const randomValue = Math.random();
+    if (randomValue > failureProbability) {
+    resolve(`${taskName} has succeeded`);
+    } else {
+    reject(`${taskName} has failed`);
+    }
     });
-}
-
-async function executeWithRetry(taskName, retries, failureProbability) {
-    // Write your code here
-}
-
-executeWithRetry("SampleTask", 3, 0.5);
-
+   }
+   async function executeWithRetry(taskName, retries, failureProbability) {
+    for (let i = 0; i <= retries; i++) {
+    try {
+    const result = await unstableTask(taskName, failureProbability);
+    console.log(result);
+    return; 
+    } catch (error) {
+    console.log(error);
+    if (i === retries) {
+    throw new Error(`Failed after ${retries} retries`);
+    }
+    }
+    }
+   }
+   executeWithRetry("Partying", 3, 0.5);
